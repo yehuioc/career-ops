@@ -1,9 +1,5 @@
-data/
 private/
-.tmp/
 .venv/
-build/
-test-output/
 __pycache__/
 *.pyc
 .pytest_cache/
@@ -11,6 +7,8 @@ __pycache__/
 .env.*
 *.key
 *.pem
-vendor/
-upstream/
-products/
+*.p12
+*.pfx
+*.sqlite
+*.sqlite3
+*.db

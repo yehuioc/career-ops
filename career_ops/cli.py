@@ -10,6 +10,7 @@ from pathlib import Path
 
 from .store import DEFAULT_DB, PROJECT_ROOT, StateError, Store
 from .workflow import Workflow
+from .candidate import DEFAULT_PROFILE
 
 
 def write_json(value: object, output: str | Path | None = None) -> None:
@@ -63,7 +64,7 @@ def validate_collection_evidence(observations: list[dict], evidence_dir: str | P
 def parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="本地求职执行系统：审阅、人工批准、确认投递与反馈；不自动发送")
     p.add_argument("--db", default=os.environ.get("CAREER_OPS_DB", str(DEFAULT_DB)))
-    p.add_argument("--candidate", help="仅用于测试/显式指定事实真源，默认context-resume/self/career-profile.json")
+    p.add_argument("--candidate", help=f"显式指定已审核事实文件；当前默认：{DEFAULT_PROFILE}")
     sub = p.add_subparsers(dest="command", required=True)
     for name in ("init", "status", "funnel", "next-actions"):
         sub.add_parser(name)
@@ -91,7 +92,7 @@ def run(args: argparse.Namespace) -> object:
         workflow = Workflow(store, args.candidate)
         command = args.command
         if command in {"init", "status"}:
-            return {"ok": True, "version": "0.1.0", "authority": str(store.path), "candidate_authority": str(PROJECT_ROOT.parent / "context-resume" / "self" / "career-profile.json"), "send_enabled": False, "funnel": store.funnel()}
+            return {"ok": True, "version": "0.1.0", "authority": str(store.path), "candidate_authority": str(Path(args.candidate).resolve() if args.candidate else DEFAULT_PROFILE), "send_enabled": False, "funnel": store.funnel()}
         if command == "list":
             return {"ok": True, "opportunities": store.list_opportunities(status=args.status, limit=args.limit)}
         if command == "show":

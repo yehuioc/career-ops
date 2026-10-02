@@ -1,7 +1,6 @@
 """Read the controller-reviewed fact ledger; never infer new candidate facts."""
 from __future__ import annotations
 
-import os
 import copy
 import hashlib
 import json
@@ -9,9 +8,10 @@ import re
 from pathlib import Path
 from typing import Any
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-WORKSPACE_ROOT = Path(os.environ.get("CAREER_WORKSPACE_ROOT", str(PROJECT_ROOT))).resolve()
-DEFAULT_PROFILE = PROJECT_ROOT / "private" / "career-profile.json"
+from .config import PROJECT_ROOT, configured_path
+
+WORKSPACE_ROOT = configured_path("workspace_root", PROJECT_ROOT, "CAREER_WORKSPACE_ROOT")
+DEFAULT_PROFILE = configured_path("candidate_profile", "private/career-profile.json", "CAREER_OPS_CANDIDATE")
 STATUSES = {"direct", "partial", "unknown", "not_met"}
 
 
